@@ -51,12 +51,11 @@ private:
 
     node *find_max(node *);
 
-    Info find_info(node *, const Key&);
     bool remove(node *&, const Key &);
 
     void copy(node *&, node *);
-
-
+    
+    node * search(const Key &) const;
 
 public:
 
@@ -74,30 +73,34 @@ public:
 
     Dictionary &operator=(const Dictionary &);
 
-    bool search(const Key &) const;
+    bool find(const Key&);
 
     int max();
 
     int min();
 
-    //searching for info with given key
-    Info getInfo(const Key&);
+    Info& getInfo(const Key&);
 
     Key& getKey();
 };
 template <typename Key, typename Info>
-auto Dictionary<Key,Info>::find_info(node *rt, const Key& k) -> Info{
-    if (rt){
-
+bool Dictionary<Key, Info>::find(const Key& k){
+    auto x = search(k);
+    if(x){
+        return true;
     }
-    return 0;
+    else {
+        return false;
+    }
 }
 
-
 template<typename Key, typename Info>
-Info Dictionary<Key, Info>::getInfo(const Key& k) {
-
-    return find_info(root, k);
+Info& Dictionary<Key, Info>::getInfo(const Key& k) {
+    node *tmp = search(k);
+    if(tmp){
+        return tmp->_info;
+    }
+    throw std::exception();
 }
 
 template <typename Key, typename Info>
@@ -123,7 +126,7 @@ int Dictionary<Key, Info>::min() {
 }
 
 template<typename Key, typename Info>
-bool Dictionary<Key, Info>::search(const Key &k) const {
+auto Dictionary<Key, Info>::search(const Key &k) const -> node * {
     bool found = false;
     if (root) {
         node *curr;
@@ -135,10 +138,12 @@ bool Dictionary<Key, Info>::search(const Key &k) const {
                 curr = curr->left;
             } else {
                 curr = curr->right;
-            }
         }
+            }
+
+    return curr;
     }
-    return found;
+    return nullptr;
 }
 
 template<typename Key, typename Info>
